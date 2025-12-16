@@ -1,149 +1,710 @@
-document.addEventListener('DOMContentLoaded', () => {
-    // --- LÓGICA DE NAVEGACIÓN POR PESTAÑAS (TABS) ---
-    const navLinks = document.querySelectorAll('.nav-link');
-    const tabContents = document.querySelectorAll('.tab-content');
+/* Paleta de Colores
+   Morado Oscuro (Base/Acento): #4B0082 (Indigo)
+   Morado Medio (Texto/Elementos): #6A0DAD (Dark Orchid)
+   Lila (Fondo de cajas/Detalles): #C8A2C8 (Lilac)
+   Lavanda Claro (Fondo general): #E6E6FA (Lavender)
+   Morado Más Claro (Hover/Secundario): #BA55D3 (Medium Orchid)
+   Violeta Pálido (Bordes/Sombras): #DDA0DD (Plum)
+*/
 
-    function showTab(targetId) {
-        // Ocultar todos los contenidos de las pestañas
-        tabContents.forEach(content => {
-            content.classList.remove('active-tab');
-        });
+@import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;700&family=Poppins:wght@300;400;600&display=swap');
 
-        // Mostrar el contenido deseado
-        const targetElement = document.querySelector(targetId);
-        if (targetElement) {
-            targetElement.classList.add('active-tab');
-            // Asegura que el scroll esté arriba
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
 
-        // Remover la clase activa de todos los enlaces de navegación
-        navLinks.forEach(link => {
-            link.classList.remove('active-link');
-        });
+body {
+    font-family: 'Poppins', sans-serif;
+    /* Cambiamos el fondo para que las burbujas sean visibles */
+    background: #E6E6FA; /* Fondo base Lavanda */
+    color: #4B0082;
+    line-height: 1.6;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    overflow-x: hidden;
+    overflow-y: auto;
+}
 
-        // Añadir la clase activa al enlace clicado
-        const activeLink = document.querySelector(`a[href="${targetId}"]`);
-        if (activeLink) {
-            activeLink.classList.add('active-link');
-        }
+/* --- EFECTO DE BURBUJAS --- */
+.bubbles {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    z-index: -1; /* Mantiene las burbujas detrás del contenido */
+}
+.bubbles span {
+    position: absolute;
+    display: block;
+    list-style: none;
+    width: 20px;
+    height: 20px;
+    background: rgba(186, 85, 211, 0.3); /* Morado claro transparente */
+    animation: animateBubbles 25s linear infinite;
+    bottom: -150px;
+    border-radius: 50%;
+    box-shadow: 0 0 10px rgba(186, 85, 211, 0.5);
+}
+.bubbles span:nth-child(1) {
+    left: 25%;
+    width: 80px;
+    height: 80px;
+    animation-delay: 0s;
+}
+.bubbles span:nth-child(2) {
+    left: 10%;
+    width: 20px;
+    height: 20px;
+    animation-delay: 2s;
+    animation-duration: 12s;
+}
+.bubbles span:nth-child(3) {
+    left: 70%;
+    width: 20px;
+    height: 20px;
+    animation-delay: 4s;
+}
+.bubbles span:nth-child(4) {
+    left: 40%;
+    width: 60px;
+    height: 60px;
+    animation-delay: 0s;
+    animation-duration: 18s;
+}
+.bubbles span:nth-child(5) {
+    left: 65%;
+    width: 20px;
+    height: 20px;
+    animation-delay: 0s;
+}
+.bubbles span:nth-child(6) {
+    left: 75%;
+    width: 110px;
+    height: 110px;
+    animation-delay: 3s;
+}
+.bubbles span:nth-child(7) {
+    left: 35%;
+    width: 15px;
+    height: 15px;
+    animation-delay: 7s;
+}
+@keyframes animateBubbles {
+    0% {
+        transform: translateY(0) rotate(0deg);
+        opacity: 1;
+        border-radius: 0;
     }
-
-    // Manejador de clic para los enlaces de navegación
-    navLinks.forEach(link => {
-        link.addEventListener('click', (e) => {
-            e.preventDefault(); // Evita el comportamiento por defecto del enlace (ir a la ancla)
-            const targetId = link.getAttribute('href');
-            showTab(targetId);
-        });
-    });
-
-    // Inicializar la pestaña 'inicio' al cargar la página
-    showTab('#inicio'); 
-
-    // --- LÓGICA DE CAMBIO DE IMAGEN EN INICIO (Solicitud 3) ---
-    const mainProfilePic = document.getElementById('main-profile-pic');
-    const mainPhotoFrame = document.getElementById('main-photo-frame');
-    const images = [
-        "https://xatimg.com/image/Nf3PO2gv9jk1.jpg", // Foto Inicial
-        "https://xatimg.com/image/45sAHFD1nJSM.jpg", 
-        "https://xatimg.com/image/2MaN1JR2bROp.jpg",
-    ];
-    let currentImageIndex = 0;
-    let intervalId;
-
-    function changeImage(index) {
-        // Aplicar la transición de opacidad
-        mainProfilePic.style.opacity = 0;
-
-        setTimeout(() => {
-            mainProfilePic.src = images[index];
-            mainProfilePic.alt = `Foto principal de Solange ${index + 1}`;
-            mainProfilePic.style.opacity = 1;
-        }, 500); // Espera 500ms (la duración de la transición CSS)
+    100% {
+        transform: translateY(-1000px) rotate(720deg);
+        opacity: 0;
+        border-radius: 50%;
     }
+}
+/* --- FIN EFECTO DE BURBUJAS --- */
 
-    function startAutoChange() {
-        intervalId = setInterval(() => {
-            currentImageIndex = (currentImageIndex + 1) % images.length;
-            changeImage(currentImageIndex);
-        }, 5000); // Cambia cada 5 segundos
+
+/* --- Navegación Principal (Mejorada) --- */
+.main-nav {
+    width: 100%;
+    background-color: #4B0082; 
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+    z-index: 1000;
+    position: sticky; 
+    top: 0;
+    transition: background-color 0.3s ease;
+    border-bottom: 5px solid #BA55D3; 
+}
+
+.main-nav ul {
+    list-style: none;
+    display: flex;
+    justify-content: center;
+    padding: 0; 
+    margin: 0 auto;
+    max-width: 800px;
+}
+
+.main-nav ul li {
+    position: relative;
+}
+
+.main-nav ul li a {
+    color: white;
+    text-decoration: none;
+    padding: 15px 25px; 
+    margin: 0; 
+    transition: background-color 0.4s ease, color 0.4s ease;
+    display: block;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    border-radius: 0; 
+}
+
+.main-nav ul li a:hover,
+.main-nav ul li a.active-link { 
+    background-color: #6A0DAD; 
+    color: #E6E6FA; 
+    transform: none; 
+    box-shadow: none;
+}
+
+.main-nav ul li a:hover::after,
+.main-nav ul li a.active-link::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80%; 
+    height: 3px;
+    background-color: #C8A2C8; 
+    animation: slideIn 0.3s forwards;
+    border-radius: 2px;
+}
+
+@keyframes slideIn {
+    from {
+        width: 0%;
     }
-
-    function stopAutoChange() {
-        clearInterval(intervalId);
+    to {
+        width: 80%;
     }
+}
 
-    // 1. Inicio del cambio automático
-    startAutoChange();
+@media (max-width: 600px) {
+    .main-nav ul {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    .main-nav ul li a {
+        text-align: center;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    .main-nav ul li a:hover::after,
+    .main-nav ul li a.active-link::after {
+        width: 40%;
+    }
+}
 
-    // 2. Comportamiento al pasar el ratón (Hover)
-    mainPhotoFrame.addEventListener('mouseenter', () => {
-        stopAutoChange(); // Detiene el cambio automático
-        // Pasa a la siguiente imagen inmediatamente al hacer hover
-        currentImageIndex = (currentImageIndex + 1) % images.length;
-        changeImage(currentImageIndex);
-    });
+/* --- Contenedor Principal y Grid Layout --- */
+.container {
+    max-width: 1000px;
+    margin: 30px auto;
+    padding: 0 20px;
+    flex-grow: 1;
+}
 
-    mainPhotoFrame.addEventListener('mouseleave', () => {
-        startAutoChange(); // Reanuda el cambio automático
-    });
+.grid-layout {
+    display: grid;
+    /* Modificado: 2 columnas, y ahora solo 2 filas ya que el reproductor está en la Fila 2, Columna 2 */
+    grid-template-columns: 2fr 1fr; 
+    grid-template-rows: auto auto; 
+    gap: 25px;
+    justify-content: center;
+    align-items: start;
+}
+
+/* --- Estilos Generales de las Cajas --- */
+.grid-item {
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(8px);
+    padding: 25px;
+    border-radius: 20px;
+    box-shadow: 0 8px 20px rgba(75, 0, 130, 0.25);
+    border: 1px solid #DDA0DD;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.grid-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 25px rgba(75, 0, 130, 0.35);
+}
+
+.box-title {
+    font-size: 1.8em;
+    text-align: center;
+    margin-bottom: 15px;
+    color: #6A0DAD;
+    position: relative;
+    padding-bottom: 10px;
+}
+
+/* Tipografía de "SOLANGE" (Solicitud 2) */
+.solange-title {
+    font-family: 'Dancing Script', cursive;
+    font-size: 3em; 
+    font-weight: 700;
+    color: #4B0082; 
+    text-shadow: 2px 2px 4px rgba(186, 85, 211, 0.4); 
+}
+.solange-title::after {
+    /* Ocultar el separador para este título */
+    content: none !important;
+}
+
+.box-title::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60px;
+    height: 2px;
+    background-color: #BA55D3;
+    border-radius: 2px;
+}
+.small-title {
+    font-size: 1.4em; /* Título un poco más pequeño para el reproductor */
+}
+
+/* ---------------------------------------------------------------- */
+/* --- Cajas Reorganizadas (Inicio) --- */
+/* ---------------------------------------------------------------- */
+
+/* CAJA 1: Foto Grande (Ocupa la altura de las dos filas de la columna 1) */
+.large-photo-box {
+    grid-column: 1 / 2; 
+    grid-row: 1 / 3; /* Ahora ocupa Fila 1 y Fila 2 */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0; 
+    background: transparent; 
+    box-shadow: none; 
+    border: none;
+    min-height: 400px; 
+}
+.large-photo-box:hover {
+    transform: none;
+    box-shadow: none;
+}
+.profile-frame-large {
+    width: 100%;
+    height: 100%;
+    max-width: 400px; 
+    border: none; 
+    padding: 0; 
+    background: linear-gradient(45deg, #C8A2C8, #6A0DAD);
+    box-shadow: 0 0 25px rgba(186, 85, 211, 0.6); 
+    overflow: hidden;
+    transition: all 0.5s ease;
+    position: relative;
+    border-radius: 15px; 
+}
+.profile-frame-large:hover {
+    transform: scale(1.02);
+    box-shadow: 0 0 35px rgba(186, 85, 211, 1);
+}
+
+/* Clase para la animación de cambio de imagen */
+.profile-pic-main-large {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 15px;
+    border: none;
+    display: block;
+    /* Transición para un cambio de imagen más suave */
+    transition: opacity 0.5s ease-in-out; 
+}
+
+
+/* CAJA 2: Información de Perfil (Columna 2, Fila 1) */
+.profile-info-box-right {
+    grid-column: 2 / 3; 
+    grid-row: 1 / 2;
+    text-align: center;
+    padding: 30px 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+/* ... estilos de texto (hanni-name, intro-text, detail-icons) se mantienen ... */
+
+
+/* CAJA 3: Reproductor de YouTube (Columna 2, Fila 2 - EL CUADRADO ROJO) */
+.youtube-player-box {
+    grid-column: 2 / 3; /* Columna de la derecha */
+    grid-row: 2 / 3; /* Justo debajo del cuadro de bienvenida */
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start; /* Alinea el contenido arriba */
+}
+
+/* Contenedor ajustado para el IFRAME */
+.youtube-container-small {
+    position: relative;
+    width: 100%;
+    padding-bottom: 56.25%; /* Relación de aspecto 16:9 */
+    height: 0;
+    margin-top: 10px;
+    overflow: hidden;
+    border-radius: 10px;
+    box-shadow: 0 3px 15px rgba(75, 0, 130, 0.3);
+}
+
+.youtube-container-small iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: 0;
+}
+
+.now-playing {
+    font-style: italic;
+    color: #6A0DAD;
+    margin-top: 10px;
+    margin-bottom: 0;
+    font-size: 0.9em;
+}
+
+/* ---------------------------------------------------------------- */
+/* --- Galería/Slider (Solicitud 1) --- */
+/* ---------------------------------------------------------------- */
+
+.slider-container {
+    position: relative;
+    max-width: 500px; /* CAMBIO: Reducido para hacer el slider más pequeño */
+    margin: 20px auto;
+    overflow: hidden;
+    border-radius: 15px;
+    box-shadow: 0 8px 20px rgba(75, 0, 130, 0.25);
+    border: 3px solid #BA55D3;
+    /* Interacción: Sombra al pasar el ratón */
+    transition: all 0.5s ease;
+}
+
+.slider-container:hover {
+    box-shadow: 0 0 30px rgba(186, 85, 211, 0.8), 0 0 10px rgba(255, 255, 255, 0.5) inset; 
+    transform: scale(1.01);
+}
+
+.gallery-box {
+    /* Ajustar la altura mínima del contenedor para que la caja no colapse */
+    min-height: 500px; 
+}
+
+
+.slider-track {
+    display: flex;
+    transition: transform 0.5s ease-in-out;
+}
+
+.slider-img {
+    min-width: 100%;
+    width: 100%;
+    height: 350px; /* CAMBIO: Altura fija para centrar la imagen */
+    display: block;
+    /* CAMBIO CLAVE: Usamos 'contain' para que la foto no se recorte */
+    object-fit: contain;
+    /* Fondo para rellenar el espacio si la imagen no llena el contenedor */
+    background-color: #C8A2C8; 
+    padding: 10px; 
+    transition: transform 0.3s ease;
+}
+
+/* Si quieres una interacción directa en la imagen:
+.slider-img:hover {
+    transform: scale(1.05);
+}
+*/
+
+.slider-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(75, 0, 130, 0.6); 
+    color: white;
+    border: none;
+    padding: 10px;
+    cursor: pointer;
+    z-index: 10;
+    opacity: 0.7;
+    transition: opacity 0.3s, background-color 0.3s;
+    font-size: 1.5em;
+    border-radius: 5px;
+}
+
+.slider-btn:hover {
+    opacity: 1;
+    background: #6A0DAD;
+}
+
+.prev-btn {
+    left: 10px;
+}
+
+.next-btn {
+    right: 10px;
+}
+
+.slider-dots {
+    text-align: center;
+    padding: 10px 0;
+}
+
+.dot {
+    height: 12px;
+    width: 12px;
+    margin: 0 5px;
+    background-color: #DDA0DD; 
+    border-radius: 50%;
+    display: inline-block;
+    transition: background-color 0.3s ease;
+    cursor: pointer;
+}
+
+.dot.active {
+    background-color: #6A0DAD; 
+    transform: scale(1.2);
+}
+
+/* --- Estilos para la descripción de la galería (NUEVO) --- */
+.gallery-description {
+    text-align: center;
+    margin-top: 25px;
+    padding: 15px;
+    background-color: #F8F4FF; /* Un fondo muy suave */
+    border-radius: 10px;
+    border: 1px dashed #DDA0DD;
+}
+.gallery-description p {
+    margin: 5px 0;
+    color: #6A0DAD;
+    font-size: 0.95em;
+}
+
+
+/* --- Estilos para la Sección Perfil (Nueva Tarjeta - NUEVO) --- */
+.profile-details-content {
+    display: flex;
+    gap: 30px;
+    align-items: center; 
+    padding: 10px;
+}
+
+.profile-image-section {
+    flex-shrink: 0;
+    width: 40%;
+    max-width: 300px; 
+    position: relative;
+}
+
+.profile-pic-frame {
+    border: 5px solid #BA55D3;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    transition: transform 0.5s ease;
+}
+
+.profile-pic-frame:hover {
+    transform: rotate(3deg) scale(1.05); /* Efecto interactivo */
+}
+
+.profile-pic-detail {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+.profile-text-section {
+    flex-grow: 1;
+}
+
+.id-text {
+    font-size: 0.9em;
+    color: #BA55D3;
+    margin-bottom: 15px;
+}
+
+.divider {
+    border: 0;
+    height: 1px;
+    background-image: linear-gradient(to right, #DDA0DD, #C8A2C8, #DDA0DD);
+    margin: 20px 0;
+}
+
+/* Efecto de Degradado en el texto (Solicitud de efecto) */
+.gradient-text {
+    font-family: 'Dancing Script', cursive;
+    font-size: 2.5em; 
+    font-weight: 700;
+    background: linear-gradient(45deg, #4B0082, #BA55D3, #6A0DAD);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    display: inline-block;
+    animation: gradientShift 5s ease infinite alternate;
+}
+
+@keyframes gradientShift {
+    0% { background-position: 0% 50%; }
+    100% { background-position: 100% 50%; }
+}
+
+
+/* --- Estilos para la Nueva Sección Amigos (NUEVO) --- */
+.friends-list-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px;
+    margin-top: 20px;
+}
+
+.friend-card-link {
+    text-decoration: none; /* Quita el subrayado del enlace */
+    color: inherit; /* Hereda el color del texto */
+    display: block;
+    width: 100%;
+    max-width: 250px;
+}
+
+.friend-card-new {
+    background: #C8A2C8; /* Lila de fondo para la tarjeta */
+    border: 2px solid #BA55D3;
+    border-radius: 15px;
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.friend-card-new:hover {
+    transform: translateY(-5px) scale(1.02);
+    box-shadow: 0 8px 15px rgba(75, 0, 130, 0.3);
+    background: #BA55D3; /* Cambio de color al pasar el ratón */
+    border-color: #4B0082;
+}
+
+.friend-avatar {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-bottom: 10px;
+    border: 3px solid white;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+}
+
+.friend-name-text {
+    font-weight: 600;
+    color: #4B0082; /* Color de texto del nombre */
+    font-size: 1.1em;
+    display: block; /* Asegura que no se aplique el estilo de enlace */
+    transition: color 0.3s ease;
+}
+
+.friend-card-new:hover .friend-name-text {
+    color: white; /* Cambia el color del nombre al hacer hover */
+}
+/* ---------------------------------------------------------------- */
+
+
+/* --- Cajas Inferiores (Amigos - Full Width) --- */
+/* ... estilos de amigos se mantienen ... */
+
+.friends-box {
+    text-align: center;
+}
+
+/* --- Pie de Página (Centrado sin fondo) --- */
+.main-footer {
+    padding: 15px 20px;
+    text-align: center;
+    background: transparent; 
+    color: #4B0082; 
+    border-top: none;
+    position: relative; 
+    z-index: 10;
+}
+.copyright {
+    font-size: 0.8em;
+    opacity: 0.7;
+    margin: 0;
+}
+
+/* ---------------------------------------------------------------- */
+/* --- SOLUCIÓN DE NAVEGACIÓN Y RESPONSIVIDAD --- */
+/* ---------------------------------------------------------------- */
+
+.tab-content {
+    display: none !important; 
+    animation: fadeIn 0.5s ease-out;
+}
+.active-tab {
+    display: grid !important; 
+}
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.full-width-box {
+    grid-column: 1 / 3 !important; 
+}
+
+
+/* --- Responsividad --- */
+@media (max-width: 768px) {
+    .grid-layout {
+        grid-template-columns: 1fr; 
+        grid-template-rows: auto auto auto auto; /* 4 filas en móvil */
+    }
     
-    // --- LÓGICA DE CARRUSEL/SLIDER EN GALERÍA (Solicitud 1) ---
-    const slider = document.getElementById('gallery-slider');
-    const slides = document.querySelectorAll('.slider-img');
-    const prevBtn = document.querySelector('.prev-btn');
-    const nextBtn = document.querySelector('.next-btn');
-    const dotsContainer = document.getElementById('slider-dots');
-    
-    if (slider && slides.length > 0) {
-        let currentIndex = 0;
-        
-        // Crea los puntos indicadores
-        slides.forEach((_, index) => {
-            const dot = document.createElement('span');
-            dot.classList.add('dot');
-            if (index === 0) dot.classList.add('active');
-            dot.addEventListener('click', () => {
-                moveToSlide(index);
-            });
-            dotsContainer.appendChild(dot);
-        });
-
-        const dots = document.querySelectorAll('.dot');
-
-        function updateDots(index) {
-            dots.forEach(dot => dot.classList.remove('active'));
-            dots[index].classList.add('active');
-        }
-
-        function moveToSlide(index) {
-            if (index < 0) {
-                currentIndex = slides.length - 1;
-            } else if (index >= slides.length) {
-                currentIndex = 0;
-            } else {
-                currentIndex = index;
-            }
-
-            // Calcula el desplazamiento: -100% * index
-            const offset = -currentIndex * 100;
-            slider.style.transform = `translateX(${offset}%)`;
-            
-            updateDots(currentIndex);
-        }
-
-        prevBtn.addEventListener('click', () => {
-            moveToSlide(currentIndex - 1);
-        });
-
-        nextBtn.addEventListener('click', () => {
-            moveToSlide(currentIndex + 1);
-        });
-        
-        // Carrusel automático para la galería (opcional)
-        // setInterval(() => {
-        //     moveToSlide(currentIndex + 1);
-        // }, 7000); // 7 segundos para el carrusel de la galería
+    /* Todas las cajas ocupan el ancho completo y fluyen en el orden del código HTML */
+    .large-photo-box,
+    .profile-info-box-right,
+    .youtube-player-box,
+    .gallery-box,
+    .full-width-box {
+        grid-column: 1 / 2 !important; 
+        grid-row: auto !important;
     }
-});
+    
+    .profile-frame-large {
+        max-width: 90%; 
+        max-height: 350px;
+        margin: 20px auto;
+    }
+
+    /* Responsividad para la sección Perfil (NUEVO) */
+    .profile-details-content {
+        flex-direction: column;
+        text-align: center;
+    }
+    .profile-image-section {
+        width: 80%;
+        max-width: none;
+    }
+    
+    /* El slider se adapta al ancho */
+    .slider-container {
+        max-width: 100%;
+    }
+    
+    .slider-img {
+        height: 300px; /* Altura más adecuada para móviles */
+    }
+
+    /* Reducir el tamaño de las burbujas en móvil para que no saturen */
+    .bubbles span {
+        width: 10px !important;
+        height: 10px !important;
+    }
+}
