@@ -376,13 +376,26 @@ body {
 
 .slider-container {
     position: relative;
-    max-width: 600px; 
+    max-width: 500px; /* CAMBIO: Reducido para hacer el slider más pequeño */
     margin: 20px auto;
     overflow: hidden;
     border-radius: 15px;
     box-shadow: 0 8px 20px rgba(75, 0, 130, 0.25);
     border: 3px solid #BA55D3;
+    /* Interacción: Sombra al pasar el ratón */
+    transition: all 0.5s ease;
 }
+
+.slider-container:hover {
+    box-shadow: 0 0 30px rgba(186, 85, 211, 0.8), 0 0 10px rgba(255, 255, 255, 0.5) inset; 
+    transform: scale(1.01);
+}
+
+.gallery-box {
+    /* Ajustar la altura mínima del contenedor para que la caja no colapse */
+    min-height: 500px; 
+}
+
 
 .slider-track {
     display: flex;
@@ -392,10 +405,21 @@ body {
 .slider-img {
     min-width: 100%;
     width: 100%;
-    height: auto;
+    height: 350px; /* CAMBIO: Altura fija para centrar la imagen */
     display: block;
-    object-fit: cover;
+    /* CAMBIO CLAVE: Usamos 'contain' para que la foto no se recorte */
+    object-fit: contain;
+    /* Fondo para rellenar el espacio si la imagen no llena el contenedor */
+    background-color: #C8A2C8; 
+    padding: 10px; 
+    transition: transform 0.3s ease;
 }
+
+/* Si quieres una interacción directa en la imagen:
+.slider-img:hover {
+    transform: scale(1.05);
+}
+*/
 
 .slider-btn {
     position: absolute;
@@ -672,6 +696,10 @@ body {
     /* El slider se adapta al ancho */
     .slider-container {
         max-width: 100%;
+    }
+    
+    .slider-img {
+        height: 300px; /* Altura más adecuada para móviles */
     }
 
     /* Reducir el tamaño de las burbujas en móvil para que no saturen */
